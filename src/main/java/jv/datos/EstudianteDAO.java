@@ -103,7 +103,7 @@ public class EstudianteDAO {
         estudiantes.forEach(System.out::println);
 
         //buscar por id, le pasamos como parametro 1 al objeto estudiante
-        var estudiante1 = new Estudiante(1);
+        var estudiante1 = new Estudiante(3);
         System.out.println("Estudiante antes de la busqueda: "+estudiante1);
         var encontrado = estudianteDao.buscarEstudiantePorId(estudiante1);
         if(encontrado)
