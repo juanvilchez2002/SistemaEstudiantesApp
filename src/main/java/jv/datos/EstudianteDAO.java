@@ -71,10 +71,13 @@ public class EstudianteDAO {
 
         try {
             ps = con.prepareStatement(sql);
+            //se adiciona el parametro de la consulta de la variable sql
             ps.setInt(1, estudiante.getIdEstudiante());
+            //se usa executeQuery para ejecutar la sentencia y poder recuperar datos
             rs = ps.executeQuery();
 
             if(rs.next()){
+                //recuperamos datos
                 estudiante.setNombre(rs.getString("nombre"));
                 estudiante.setApellido(rs.getString("apellido"));
                 estudiante.setTelefono(rs.getString("telefono"));
@@ -93,23 +96,63 @@ public class EstudianteDAO {
         return false;
     }
 
+    public boolean agregarEstudiante(Estudiante estudiante){
+        PreparedStatement ps;
+        Connection con = getConexion();
+        String sql = """
+                INSERT INTO estudiante(nombre, apellido, telefono, email) 
+                VALUES(?,?,?,?)""";
+        try {
+
+            ps = con.prepareStatement(sql);
+            //se sustituye los parametros de la variable sql en forma ordenada
+            ps.setString(1, estudiante.getNombre());
+            ps.setString(2, estudiante.getApellido());
+            ps.setString(3, estudiante.getTelefono());
+            ps.setString(4, estudiante.getEmail());
+            //usamos execute para ejecutar una sentencia sin necesidad de recuperar datos
+            ps.execute();
+            return true;
+        }catch (Exception e){
+            System.out.println("Error al agregar estudiante: "+e.getMessage());
+        }finally {
+            try{
+                con.close();
+            }catch (Exception e){
+                System.out.println("Ocurrio un error al cerrar la conexion: "+e.getMessage());
+            }
+        }
+        return false;
+    }
+
     //probamos que se ejecute
     public static void main(String[] args) {
+        //DAO Estudiante
+        var estudianteDao = new EstudianteDAO();
+
+        //agregamos un estudiante
+        System.out.println("Agregando de Estudiantes: ");
+        var nuevoEstudiante = new Estudiante("Carlos", "Lara", "159159159", "tuemail@gmailcom");
+        var agregado = estudianteDao.agregarEstudiante(nuevoEstudiante);
+        if(agregado)
+            System.out.println("Estudiante agregado: "+nuevoEstudiante);
+        else
+            System.out.println("No se agregado estudiante: "+nuevoEstudiante);
+
         //listar estudiantes
         System.out.println("Listado de Estudiantes: ");
-
-        var estudianteDao = new EstudianteDAO();
         List<Estudiante> estudiantes = estudianteDao.listarEstudiantes();
         estudiantes.forEach(System.out::println);
 
         //buscar por id, le pasamos como parametro 1 al objeto estudiante
         var estudiante1 = new Estudiante(3);
-        System.out.println("Estudiante antes de la busqueda: "+estudiante1);
+        System.out.println("\nEstudiante antes de la busqueda: "+estudiante1);
         var encontrado = estudianteDao.buscarEstudiantePorId(estudiante1);
         if(encontrado)
             System.out.println("Estudiante encontrado: "+estudiante1);
         else
             System.out.println("No se encontr estudiante: "+estudiante1.getIdEstudiante());
+
 
     }
 }
