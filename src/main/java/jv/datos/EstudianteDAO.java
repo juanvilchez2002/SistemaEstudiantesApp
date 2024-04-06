@@ -180,6 +180,7 @@ public class EstudianteDAO {
         else
             System.out.println("No se modifico estudiante: "+estudianteModificar);
 
+
         //listar estudiantes
         System.out.println("Listado de Estudiantes: ");
         List<Estudiante> estudiantes = estudianteDao.listarEstudiantes();
